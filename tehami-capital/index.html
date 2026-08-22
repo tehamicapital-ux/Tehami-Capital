@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tehami Capital | Portfolio Management</title>
+<meta name="description" content="Tehami Capital — independent portfolio management and equity research.">
+<style>
+:root{
+  --bg:#f6f8fb; --surface:#ffffff; --navy:#10233f; --ink:#172033;
+  --muted:#667085; --line:#e4e8ee; --green:#087443; --red:#b42318;
+  --blue:#315efb; --shadow:0 10px 30px rgba(16,35,63,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:inherit;text-decoration:none}
+header{position:sticky;top:0;z-index:10;background:rgba(255,255,255,.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{max-width:1180px;margin:auto;padding:18px 24px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:850;letter-spacing:-.035em;color:var(--navy)}
+.logo span{font-weight:500;color:var(--muted)}
+.links{display:flex;gap:26px;font-size:14px;font-weight:650;color:#475467}
+.links a:hover{color:var(--blue)}
+.container{max-width:1180px;margin:auto;padding:0 24px}
+.hero{padding:92px 0 70px;display:grid;grid-template-columns:1.3fr .7fr;gap:60px;align-items:end}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--blue);font-weight:800}
+h1{font-size:58px;line-height:1.02;letter-spacing:-.055em;color:var(--navy);margin:15px 0 20px;max-width:700px}
+.hero p{font-size:18px;line-height:1.65;color:var(--muted);max-width:650px;margin:0}
+.data-note{margin-top:15px;font-size:12px;color:var(--muted);font-weight:650;letter-spacing:.01em}
+.hero-card{background:var(--navy);color:white;border-radius:18px;padding:28px;box-shadow:var(--shadow)}
+.hero-card .small{font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.65}
+.hero-card .big{font-size:38px;font-weight:800;margin:8px 0}
+.hero-card .caption{font-size:13px;opacity:.7}
+section{padding:54px 0}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:20px}
+h2{font-size:28px;letter-spacing:-.035em;color:var(--navy);margin:0}
+.section-sub{color:var(--muted);font-size:14px;margin-top:6px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.metric{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow)}
+.metric-label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:750}
+.metric-value{font-size:28px;font-weight:820;letter-spacing:-.035em;margin-top:8px}
+.green{color:var(--green)}.red{color:var(--red)}
+.portfolio-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.table-scroll{overflow-x:auto}
+.portfolio-grid{overflow:hidden}
+.portfolio-header,.portfolio-row{
+  display:grid;
+  grid-template-columns:minmax(230px,2fr) minmax(155px,1.25fr) minmax(105px,.8fr) minmax(90px,.7fr) minmax(160px,1.25fr);
+  align-items:center;
+}
+.portfolio-header{
+  padding:16px 22px;
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+  letter-spacing:.07em;
+  font-weight:750;
+  background:#fff;
+  border-bottom:1px solid var(--line);
+}
+.portfolio-header>div:not(:first-child),.portfolio-row>div:not(:first-child){text-align:right}
+.portfolio-row{
+  padding:17px 22px;
+  border-bottom:1px solid var(--line);
+  font-size:13px;
+  min-height:78px;
+}
+.portfolio-row:last-child{border-bottom:0}
+.portfolio-row .ticker{font-weight:800;color:var(--navy)}
+.portfolio-row .company{font-size:11px;color:var(--muted);margin-top:3px}
+@media(max-width:900px){
+  .portfolio-grid{overflow-x:auto}
+  .portfolio-header,.portfolio-row{min-width:850px}
+}
+th,td{padding:16px 18px;border-bottom:1px solid var(--line);font-size:13px;white-space:nowrap}
+th{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);text-align:left}
+.num{text-align:right}.ticker{font-weight:800;color:var(--navy)}.company{font-size:11px;color:var(--muted);margin-top:3px}
+tr:last-child td{border-bottom:0}
+.allocation{height:7px;background:#e9edf3;border-radius:20px;overflow:hidden;min-width:100px}
+.allocation i{display:block;height:100%;background:var(--navy);border-radius:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.info{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;box-shadow:var(--shadow)}
+.info h3{margin:0 0 10px;color:var(--navy);font-size:18px}.info p{color:var(--muted);line-height:1.7;font-size:14px;margin:0}
+.chart-wrap{height:320px;display:flex;align-items:center;justify-content:center}
+canvas{max-width:100%;max-height:100%}
+.research{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.research-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;display:block}
+.research-card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(16,35,63,.10);border-color:#cfd7e3}
+.research-link{display:inline-block;margin-top:18px;color:var(--blue);font-size:13px;font-weight:750}
+.tag{font-size:10px;text-transform:uppercase;letter-spacing:.09em;color:var(--blue);font-weight:800}
+.research-card h3{color:var(--navy);margin:10px 0 8px;font-size:19px}
+.research-card p{color:var(--muted);font-size:13px;line-height:1.6;margin:0}
+footer{border-top:1px solid var(--line);margin-top:35px;padding:28px 0 45px;color:var(--muted);font-size:12px}
+@media(max-width:850px){
+ .hero{grid-template-columns:1fr;padding-top:65px}.metrics{grid-template-columns:repeat(2,1fr)}
+ .grid2,.research{grid-template-columns:1fr}.links{display:none}h1{font-size:44px}
+}
+@media(max-width:520px){.metrics{grid-template-columns:1fr}.container{padding:0 17px}.nav{padding:16px 17px}h1{font-size:38px}}
+</style>
+</head>
+<body>
+<header>
+  <nav class="nav">
+    <a class="logo" href="../">TEHAMI CAPITAL <span>/ Portfolio Management</span></a>
+    <div class="links">
+      <a href="../">Fawaz Tehami</a>
+      <a href="#portfolio">Portfolio</a>
+      <a href="#philosophy">Investment Philosophy</a>
+      <a href="#research">Research</a>
+      <a href="#about">About</a>
+    </div>
+  </nav>
+</header>
+
+<main class="container">
+<section class="hero">
+  <div>
+    <div class="eyebrow">Independent Portfolio Management & Equity Research</div>
+    <h1>Investing with a focus on quality, valuation and long-term value.</h1>
+    <p>Tehami Capital is an independent portfolio management and equity research initiative focused on fundamental analysis, disciplined portfolio construction and long-term investing.</p>
+  <div class="data-note">Values as of August 22, 2026. Will be updated on a quarterly basis.</div>
+  </div>
+  <div class="hero-card">
+    <div class="small">Portfolio Value</div>
+    <div class="big" id="heroValue">C$0</div>
+    <div class="caption">Current market value across 11 positions</div>
+  </div>
+</section>
+
+<section>
+  <div class="metrics">
+    <div class="metric"><div class="metric-label">Portfolio Value</div><div class="metric-value" id="totalValue">C$0</div></div>
+    <div class="metric"><div class="metric-label">Cost Basis</div><div class="metric-value" id="costBasis">C$0</div></div>
+    <div class="metric"><div class="metric-label">Unrealized Gain</div><div class="metric-value green" id="gain">C$0</div></div>
+    <div class="metric"><div class="metric-label">Overall Return</div><div class="metric-value green" id="return">0.00%</div></div>
+  </div>
+</section>
+
+<section id="portfolio">
+  <div class="section-head">
+    <div><h2>Current Portfolio</h2><div class="section-sub">Holdings and performance based on the latest portfolio data.</div></div>
+  </div>
+  <div class="portfolio-card portfolio-grid">
+    <div class="portfolio-header">
+      <div>Investment</div>
+      <div>Market Value (CAD)</div>
+      <div>Allocation</div>
+      <div>Return</div>
+      <div>Gain / Loss (CAD)</div>
+    </div>
+    <div id="portfolio"></div>
+  </div>
+</section>
+
+<section id="philosophy">
+  <div class="section-head"><div><h2>Investment Philosophy</h2><div class="section-sub">A disciplined approach to evaluating businesses and managing capital.</div></div></div>
+  <div class="grid2">
+    <div class="info"><h3>Fundamental Research</h3><p>Evaluate businesses through financial statement analysis, company and industry research, competitive positioning, operating performance and long-term value drivers.</p></div>
+    <div class="info"><h3>Valuation Discipline</h3><p>Use DCF, comparable company and precedent transaction analysis to assess intrinsic value, market expectations and potential investment returns.</p></div>
+    <div class="info"><h3>Risk Management</h3><p>Consider valuation, business quality, downside risk, sector exposure and broader market conditions when constructing and monitoring the portfolio.</p></div>
+    <div class="info"><h3>Long-Term Perspective</h3><p>Focus on businesses with durable competitive advantages and attractive long-term fundamentals rather than short-term market movements.</p></div>
+  </div>
+</section>
+
+<section>
+  <div class="grid2">
+    <div class="portfolio-card" style="padding:25px">
+      <h2 style="font-size:22px">Portfolio Allocation</h2>
+      <div class="chart-wrap"><canvas id="pie" width="300" height="300"></canvas></div>
+    </div>
+    <div class="info">
+      <h3>Portfolio Construction</h3>
+      <p style="margin-bottom:20px">The portfolio combines exposure to healthcare, financial services, industrials, consumer businesses and infrastructure-related companies.</p>
+      <div id="allocationList"></div>
+    </div>
+  </div>
+</section>
+
+<section id="research">
+  <div class="section-head"><div><h2>Selected Research</h2><div class="section-sub">Examples of fundamental investment work completed through Tehami Capital.</div></div></div>
+  <div class="research">
+    <a class="research-card" href="research/amphenol-aph-pitch.pdf" target="_blank" rel="noopener noreferrer">
+      <div class="tag">Equity Research</div>
+      <h3>Amphenol (APH)</h3>
+      <p>Investment thesis supported by company and industry research, financial modelling, DCF analysis, comparable-company valuation and assessment of long-term AI infrastructure demand.</p>
+      <span class="research-link">View pitch deck →</span>
+    </a>
+    <a class="research-card" href="research/waste-management-wm-pitch.pdf" target="_blank" rel="noopener noreferrer">
+      <div class="tag">Equity Research</div>
+      <h3>Waste Management (WM)</h3>
+      <p>Fundamental analysis of the waste management industry, competitive positioning, operating performance, growth drivers and valuation.</p>
+      <span class="research-link">View pitch deck →</span>
+    </a>
+  </div>
+</section>
+
+<section id="about">
+  <div class="info">
+    <h2 style="font-size:24px;margin-bottom:12px">About Tehami Capital</h2>
+    <p>Tehami Capital is an independent portfolio management and equity research initiative. The portfolio is managed with an emphasis on fundamental research, valuation, risk management and long-term value creation.</p>
+  </div>
+</section>
+
+<footer>
+  <div><strong>Tehami Capital</strong> · Independent Portfolio Management & Equity Research</div>
+  <div style="margin-top:7px">Portfolio information is presented for informational purposes only and does not constitute investment advice or an offer to buy or sell securities.</div>
+</footer>
+</main>
+
+<script>
+const holdings=[
+{t:"ABT",n:"Abbott Laboratories",v:23756.33,r:22.76,g:4404.15},
+{t:"GILD",n:"Gilead Sciences",v:21719.43,r:12.01,g:2329.36},
+{t:"MCK",n:"McKesson",v:21301.96,r:9.73,g:1889.11},
+{t:"ISRG",n:"Intuitive Surgical",v:6777.94,r:-10.19,g:-768.87},
+{t:"WM",n:"Waste Management",v:19119.71,r:-1.79,g:-348.17},
+{t:"RSG",n:"Republic Services",v:19736.20,r:2.06,g:398.12},
+{t:"WCN",n:"Waste Connections",v:19677.50,r:-2.86,g:-578.85},
+{t:"CP",n:"Canadian Pacific Kansas City",v:21674.11,r:6.43,g:1308.89},
+{t:"WMT",n:"Walmart",v:19982.58,r:.43,g:84.79},
+{t:"TJX",n:"TJX Companies",v:20116.25,r:-.08,g:-15.75},
+{t:"APH",n:"Amphenol Corp.",v:29822.98,r:49.21,g:9835.26}
+];
+const money=n=>n.toLocaleString("en-CA",{style:"currency",currency:"CAD",maximumFractionDigits:2});
+const total=holdings.reduce((a,x)=>a+x.v,0);
+const gain=holdings.reduce((a,x)=>a+x.g,0);
+const cost=total-gain;
+const overall=gain/cost*100;
+document.getElementById("heroValue").textContent=money(total);
+document.getElementById("totalValue").textContent=money(total);
+document.getElementById("costBasis").textContent=money(cost);
+document.getElementById("gain").textContent=(gain>=0?"+":"")+money(gain);
+document.getElementById("return").textContent=(overall>=0?"+":"")+overall.toFixed(2)+"%";
+
+const portfolio=document.getElementById("portfolio");
+holdings.forEach(x=>{
+ const a=x.v/total*100;
+ portfolio.innerHTML+=`<div class="portfolio-row">
+  <div><div class="ticker">${x.t}</div><div class="company">${x.n}</div></div>
+  <div>${money(x.v)}</div>
+  <div>${a.toFixed(2)}%</div>
+  <div class="${x.r>=0?"green":"red"}">${x.r>=0?"+":""}${x.r.toFixed(2)}%</div>
+  <div class="${x.g>=0?"green":"red"}">${x.g>=0?"+":""}${money(x.g)}</div>
+ </div>`;
+});
+
+const list=document.getElementById("allocationList");
+holdings.forEach(x=>{
+ const a=x.v/total*100;
+ list.innerHTML+=`<div style="margin:0 0 13px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><strong>${x.t}</strong><span>${a.toFixed(2)}%</span></div><div class="allocation"><i style="width:${Math.min(a*4,100)}%"></i></div></div>`;
+});
+
+const c=document.getElementById("pie"),ctx=c.getContext("2d"),cx=150,cy=150,r=112;
+const colors=["#10233f","#315efb","#12b76a","#f79009","#7f56d9","#667085","#0e7490","#b42318","#344054","#98a2b3","#7a5af8"];
+let start=-Math.PI/2;
+holdings.forEach((x,i)=>{let ang=x.v/total*Math.PI*2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,start+ang);ctx.closePath();ctx.fillStyle=colors[i%colors.length];ctx.fill();start+=ang});
+ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(cx,cy,65,0,Math.PI*2);ctx.fill();
+ctx.fillStyle="#10233f";ctx.font="700 16px system-ui";ctx.textAlign="center";ctx.fillText(money(total),cx,cy+5);
+</script>
+</body></html>
