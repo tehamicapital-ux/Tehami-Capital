@@ -101,6 +101,20 @@ tr:last-child td{border-bottom:0}
   white-space:nowrap;
 }
 
+.donut-tooltip{
+  position:fixed;
+  display:none;
+  background:var(--navy);
+  color:white;
+  padding:10px 12px;
+  border-radius:8px;
+  font-size:12px;
+  line-height:1.5;
+  box-shadow:0 8px 20px rgba(16,35,63,.18);
+  pointer-events:none;
+  z-index:1000;
+}
+
 canvas{max-width:100%;max-height:100%}
 .research{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .research-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;display:block}
