@@ -295,37 +295,85 @@ const tooltip=document.getElementById("donutTooltip");
 
 const colors=["#10233f","#315efb","#12b76a","#f79009","#7f56d9","#667085","#0e7490","#b42318","#344054","#98a2b3","#7a5af8"];
 
-let start=-Math.PI/2;
-const segments=[];
+let hoveredSlice=null;
 
-holdings.forEach((x,i)=>{
-  const ang=x.v/total*Math.PI*2;
+function drawDonut(){
 
-  segments.push({
-    ticker:x.t,
-    allocation:x.v/total*100,
-    start:start,
-    end:start+ang
+  ctx.clearRect(0,0,c.width,c.height);
+
+  let start=-Math.PI/2;
+  const segments=[];
+
+  holdings.forEach((x,i)=>{
+
+    const ang=x.v/total*Math.PI*2;
+
+    const isHovered=hoveredSlice===i;
+
+    const middle=start+ang/2;
+    const offset=isHovered?7:0;
+
+    const offsetX=Math.cos(middle)*offset;
+    const offsetY=Math.sin(middle)*offset;
+
+    segments.push({
+      ticker:x.t,
+      name:x.n,
+      allocation:x.v/total*100,
+      start:start,
+      end:start+ang
+    });
+
+    ctx.beginPath();
+
+    ctx.moveTo(cx+offsetX,cy+offsetY);
+
+    ctx.arc(
+      cx+offsetX,
+      cy+offsetY,
+      isHovered?r+3:r,
+      start,
+      start+ang
+    );
+
+    ctx.closePath();
+
+    ctx.fillStyle=colors[i%colors.length];
+
+    if(isHovered){
+      ctx.shadowColor="rgba(16,35,63,.22)";
+      ctx.shadowBlur=10;
+      ctx.shadowOffsetX=0;
+      ctx.shadowOffsetY=4;
+    }
+
+    ctx.fill();
+
+    ctx.shadowColor="transparent";
+    ctx.shadowBlur=0;
+
+    start+=ang;
   });
 
+  /* White centre */
+  ctx.fillStyle="#fff";
   ctx.beginPath();
-  ctx.moveTo(cx,cy);
-  ctx.arc(cx,cy,r,start,start+ang);
-  ctx.closePath();
-  ctx.fillStyle=colors[i%colors.length];
+  ctx.arc(cx,cy,65,0,Math.PI*2);
   ctx.fill();
 
-  start+=ang;
-});
+  /* Centre portfolio value */
+  document.getElementById("donutValue").textContent=money(total);
 
-ctx.fillStyle="#fff";
-ctx.beginPath();
-ctx.arc(cx,cy,65,0,Math.PI*2);
-ctx.fill();
+  return segments;
+}
 
-document.getElementById("donutValue").textContent=money(total);
+let segments=drawDonut();
+
+
+/* Hover interaction */
 
 c.addEventListener("mousemove",(e)=>{
+
   const rect=c.getBoundingClientRect();
 
   const scaleX=c.width/rect.width;
@@ -336,10 +384,20 @@ c.addEventListener("mousemove",(e)=>{
 
   const dx=mouseX-cx;
   const dy=mouseY-cy;
+
   const distance=Math.sqrt(dx*dx+dy*dy);
 
-  if(distance<65 || distance>r){
+  /* Ignore centre and outside of donut */
+  if(distance<65 || distance>r+10){
+
+    if(hoveredSlice!==null){
+      hoveredSlice=null;
+      segments=drawDonut();
+    }
+
     tooltip.style.display="none";
+    c.style.cursor="default";
+
     return;
   }
 
@@ -349,22 +407,59 @@ c.addEventListener("mousemove",(e)=>{
     angle+=Math.PI*2;
   }
 
-  const segment=segments.find(s=>angle>=s.start && angle<=s.end);
+  const index=segments.findIndex(segment=>{
 
-  if(segment){
+    let a=angle;
+
+    if(a<segment.start){
+      a+=Math.PI*2;
+    }
+
+    return a>=segment.start && a<=segment.end;
+  });
+
+  if(index!==-1){
+
+    if(hoveredSlice!==index){
+      hoveredSlice=index;
+      segments=drawDonut();
+    }
+
+    const segment=segments[index];
+
     tooltip.innerHTML=
-      `<strong>${segment.ticker}</strong><br>${segment.allocation.toFixed(2)}% allocation`;
+      `<strong>${segment.ticker}</strong> · ${segment.name}<br>`+
+      `Allocation: <strong>${segment.allocation.toFixed(2)}%</strong>`;
 
     tooltip.style.display="block";
-    tooltip.style.left=(e.clientX+12)+"px";
-    tooltip.style.top=(e.clientY+12)+"px";
+
+    tooltip.style.left=(e.clientX+14)+"px";
+    tooltip.style.top=(e.clientY+14)+"px";
+
+    c.style.cursor="pointer";
+
   }else{
+
+    if(hoveredSlice!==null){
+      hoveredSlice=null;
+      segments=drawDonut();
+    }
+
     tooltip.style.display="none";
+    c.style.cursor="default";
   }
 });
 
+
 c.addEventListener("mouseleave",()=>{
+
+  if(hoveredSlice!==null){
+    hoveredSlice=null;
+    segments=drawDonut();
+  }
+
   tooltip.style.display="none";
+  c.style.cursor="default";
 });
 </script>
 </body></html>
