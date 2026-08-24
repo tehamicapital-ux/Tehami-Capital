@@ -185,7 +185,12 @@ footer{border-top:1px solid var(--line);margin-top:35px;padding:28px 0 45px;colo
   <div class="grid2">
     <div class="portfolio-card" style="padding:25px">
       <h2 style="font-size:22px">Portfolio Allocation</h2>
-      <div class="chart-wrap"><canvas id="pie" width="300" height="300"></canvas></div>
+      <div class="chart-wrap">
+  <div class="donut-container">
+    <canvas id="pie" width="300" height="300"></canvas>
+    <div class="donut-value" id="donutValue"></div>
+  </div>
+</div>
     </div>
     <div class="info">
       <h3>Portfolio Construction</h3>
