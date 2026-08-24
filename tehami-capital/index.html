@@ -288,12 +288,83 @@ holdings.forEach(x=>{
  list.innerHTML+=`<div style="margin:0 0 13px"><div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px"><strong>${x.t}</strong><span>${a.toFixed(2)}%</span></div><div class="allocation"><i style="width:${Math.min(a*4,100)}%"></i></div></div>`;
 });
 
-const c=document.getElementById("pie"),ctx=c.getContext("2d"),cx=150,cy=150,r=112;
+const c=document.getElementById("pie");
+const ctx=c.getContext("2d");
+const cx=150,cy=150,r=112;
+const tooltip=document.getElementById("donutTooltip");
+
 const colors=["#10233f","#315efb","#12b76a","#f79009","#7f56d9","#667085","#0e7490","#b42318","#344054","#98a2b3","#7a5af8"];
+
 let start=-Math.PI/2;
-holdings.forEach((x,i)=>{let ang=x.v/total*Math.PI*2;ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,r,start,start+ang);ctx.closePath();ctx.fillStyle=colors[i%colors.length];ctx.fill();start+=ang});
-ctx.fillStyle="#fff";ctx.beginPath();ctx.arc(cx,cy,65,0,Math.PI*2);ctx.fill();
+const segments=[];
+
+holdings.forEach((x,i)=>{
+  const ang=x.v/total*Math.PI*2;
+
+  segments.push({
+    ticker:x.t,
+    allocation:x.v/total*100,
+    start:start,
+    end:start+ang
+  });
+
+  ctx.beginPath();
+  ctx.moveTo(cx,cy);
+  ctx.arc(cx,cy,r,start,start+ang);
+  ctx.closePath();
+  ctx.fillStyle=colors[i%colors.length];
+  ctx.fill();
+
+  start+=ang;
+});
+
+ctx.fillStyle="#fff";
+ctx.beginPath();
+ctx.arc(cx,cy,65,0,Math.PI*2);
+ctx.fill();
 
 document.getElementById("donutValue").textContent=money(total);
+
+c.addEventListener("mousemove",(e)=>{
+  const rect=c.getBoundingClientRect();
+
+  const scaleX=c.width/rect.width;
+  const scaleY=c.height/rect.height;
+
+  const mouseX=(e.clientX-rect.left)*scaleX;
+  const mouseY=(e.clientY-rect.top)*scaleY;
+
+  const dx=mouseX-cx;
+  const dy=mouseY-cy;
+  const distance=Math.sqrt(dx*dx+dy*dy);
+
+  if(distance<65 || distance>r){
+    tooltip.style.display="none";
+    return;
+  }
+
+  let angle=Math.atan2(dy,dx);
+
+  if(angle< -Math.PI/2){
+    angle+=Math.PI*2;
+  }
+
+  const segment=segments.find(s=>angle>=s.start && angle<=s.end);
+
+  if(segment){
+    tooltip.innerHTML=
+      `<strong>${segment.ticker}</strong><br>${segment.allocation.toFixed(2)}% allocation`;
+
+    tooltip.style.display="block";
+    tooltip.style.left=(e.clientX+12)+"px";
+    tooltip.style.top=(e.clientY+12)+"px";
+  }else{
+    tooltip.style.display="none";
+  }
+});
+
+c.addEventListener("mouseleave",()=>{
+  tooltip.style.display="none";
+});
 </script>
 </body></html>
