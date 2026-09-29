@@ -294,7 +294,7 @@ const realizedGain=14245.34;
 
 const totalGain=unrealizedGain+realizedGain;
 
-const cost=holdings.reduce((a,x)=>a+(x.t==="CASH"?0:x.v-x.g),0);
+const cost=total-totalGain;
 
 const overall=totalGain/cost*100;
 
