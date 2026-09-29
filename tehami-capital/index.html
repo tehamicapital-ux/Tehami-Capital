@@ -161,11 +161,32 @@ footer{border-top:1px solid var(--line);margin-top:35px;padding:28px 0 45px;colo
 </section>
 
 <section>
+  <section>
   <div class="metrics">
-    <div class="metric"><div class="metric-label">Portfolio Value</div><div class="metric-value" id="totalValue">C$0</div></div>
-    <div class="metric"><div class="metric-label">Cost Basis</div><div class="metric-value" id="costBasis">C$0</div></div>
-    <div class="metric"><div class="metric-label">Unrealized Gain</div><div class="metric-value green" id="gain">C$0</div></div>
-    <div class="metric"><div class="metric-label">Overall Return</div><div class="metric-value green" id="return">0.00%</div></div>
+    <div class="metric">
+      <div class="metric-label">Portfolio Value</div>
+      <div class="metric-value" id="totalValue">C$0</div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-label">Cost Basis</div>
+      <div class="metric-value" id="costBasis">C$0</div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-label">Unrealized Gain</div>
+      <div class="metric-value green" id="gain">C$0</div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-label">Realized Gain</div>
+      <div class="metric-value green" id="realizedGain">C$0</div>
+    </div>
+
+    <div class="metric">
+      <div class="metric-label">Overall Return</div>
+      <div class="metric-value green" id="return">0.00%</div>
+    </div>
   </div>
 </section>
 
@@ -247,28 +268,47 @@ footer{border-top:1px solid var(--line);margin-top:35px;padding:28px 0 45px;colo
 
 <script>
 const holdings=[
-{t:"ABT",n:"Abbott Laboratories",v:23756.33,r:22.76,g:4404.15},
-{t:"GILD",n:"Gilead Sciences",v:21719.43,r:12.01,g:2329.36},
-{t:"MCK",n:"McKesson",v:21301.96,r:9.73,g:1889.11},
-{t:"ISRG",n:"Intuitive Surgical",v:6777.94,r:-10.19,g:-768.87},
-{t:"WM",n:"Waste Management",v:19119.71,r:-1.79,g:-348.17},
-{t:"RSG",n:"Republic Services",v:19736.20,r:2.06,g:398.12},
-{t:"WCN",n:"Waste Connections",v:19677.50,r:-2.86,g:-578.85},
-{t:"CP",n:"Canadian Pacific Kansas City",v:21674.11,r:6.43,g:1308.89},
-{t:"WMT",n:"Walmart",v:19982.58,r:.43,g:84.79},
-{t:"TJX",n:"TJX Companies",v:20116.25,r:-.08,g:-15.75},
-{t:"APH",n:"Amphenol Corp.",v:29822.98,r:49.21,g:9835.26}
+ {t:"GILD",n:"Gilead Sciences",v:23160.71,r:19.44,g:3770.64},
+ {t:"MCK",n:"McKesson",v:21941.02,r:13.02,g:2528.17},
+ {t:"CAH",n:"Cardinal Health",v:28761.77,r:0,g:0},
+ {t:"WM",n:"Waste Management",v:18176.92,r:-6.63,g:-1290.96},
+ {t:"RSG",n:"Republic Services",v:19663.55,r:1.68,g:325.47},
+ {t:"WCN",n:"Waste Connections",v:18770.03,r:-7.34,g:-1486.32},
+ {t:"CP",n:"Canadian Pacific Kansas City",v:19370.15,r:-4.88,g:-995.07},
+ {t:"WMT",n:"Walmart",v:21578.23,r:8.45,g:1680.44},
+ {t:"TJX",n:"TJX Companies",v:19414.39,r:-3.57,g:-717.61},
+ {t:"APH",n:"Amphenol Corp.",v:32370.28,r:61.95,g:12382.56}
 ];
-const money=n=>n.toLocaleString("en-CA",{style:"currency",currency:"CAD",maximumFractionDigits:2});
+const money=n=>n.toLocaleString("en-CA",{
+  style:"currency",
+  currency:"CAD",
+  maximumFractionDigits:2
+});
+
 const total=holdings.reduce((a,x)=>a+x.v,0);
-const gain=holdings.reduce((a,x)=>a+x.g,0);
-const cost=total-gain;
-const overall=gain/cost*100;
+
+const unrealizedGain=holdings.reduce((a,x)=>a+x.g,0);
+
+const realizedGain=1862.78;
+
+const totalGain=unrealizedGain+realizedGain;
+
+const cost=total-totalGain;
+
+const overall=totalGain/cost*100;
+
 document.getElementById("heroValue").textContent=money(total);
 document.getElementById("totalValue").textContent=money(total);
 document.getElementById("costBasis").textContent=money(cost);
-document.getElementById("gain").textContent=(gain>=0?"+":"")+money(gain);
-document.getElementById("return").textContent=(overall>=0?"+":"")+overall.toFixed(2)+"%";
+
+document.getElementById("gain").textContent=
+  (unrealizedGain>=0?"+":"")+money(unrealizedGain);
+
+document.getElementById("realizedGain").textContent=
+  (realizedGain>=0?"+":"")+money(realizedGain);
+
+document.getElementById("return").textContent=
+  (overall>=0?"+":"")+overall.toFixed(2)+"%";
 
 const portfolio=document.getElementById("portfolio");
 holdings.forEach(x=>{
