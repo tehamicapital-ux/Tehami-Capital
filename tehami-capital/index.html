@@ -277,7 +277,7 @@ const holdings=[
  {t:"CP",n:"Canadian Pacific Kansas City",v:19370.15,r:-4.88,g:-995.07},
  {t:"WMT",n:"Walmart",v:21578.23,r:8.45,g:1680.44},
  {t:"TJX",n:"TJX Companies",v:19414.39,r:-3.57,g:-717.61},
- {t:"APH",n:"Amphenol Corp.",v:32370.28,r:61.95,g:12382.56}
+ {{t:"CASH",n:"Cash / Dry Powder",v:32370.28,r:0,g:0}}
 ];
 const money=n=>n.toLocaleString("en-CA",{
   style:"currency",
@@ -289,7 +289,7 @@ const total=holdings.reduce((a,x)=>a+x.v,0);
 
 const unrealizedGain=holdings.reduce((a,x)=>a+x.g,0);
 
-const realizedGain=1862.78;
+const realizedGain=14245.34;
 
 const totalGain=unrealizedGain+realizedGain;
 
