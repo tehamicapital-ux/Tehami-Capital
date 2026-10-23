@@ -31,6 +31,42 @@ h1{font-size:58px;line-height:1.02;letter-spacing:-.055em;color:var(--navy);marg
 .hero-card .small{font-size:11px;text-transform:uppercase;letter-spacing:.1em;opacity:.65}
 .hero-card .big{font-size:38px;font-weight:800;margin:8px 0}
 .hero-card .caption{font-size:13px;opacity:.7}
+  
+.hero-side-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sharpe-card {
+  background: #fff;
+  color: var(--navy);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 24px 28px;
+  box-shadow: var(--shadow);
+}
+
+.sharpe-card .small {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.sharpe-card .big {
+  font-size: 34px;
+  font-weight: 800;
+  letter-spacing: -.045em;
+  margin: 8px 0;
+}
+
+.sharpe-card .caption {
+  font-size: 13px;
+  color: var(--muted);
+}
+
 section{padding:54px 0}
 .section-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:20px}
 h2{font-size:28px;letter-spacing:-.035em;color:var(--navy);margin:0}
@@ -153,11 +189,21 @@ footer{border-top:1px solid var(--line);margin-top:35px;padding:28px 0 45px;colo
     <p>Tehami Capital is an independent portfolio management and equity research initiative focused on fundamental analysis, disciplined portfolio construction and long-term investing.</p>
   <div class="data-note">Values as of October 22, 2026. Will be updated on a quarterly basis.</div>
   </div>
+  
+<div class="hero-side-stats">
   <div class="hero-card">
     <div class="small">Portfolio Value</div>
     <div class="big" id="heroValue">C$0</div>
     <div class="caption">Current market value across 9 positions</div>
   </div>
+
+  <div class="sharpe-card">
+    <div class="small">Sharpe Ratio</div>
+    <div class="big">1.00</div>
+    <div class="caption">Risk-adjusted portfolio performance</div>
+  </div>
+</div>
+
 </section>
 
 <section>
